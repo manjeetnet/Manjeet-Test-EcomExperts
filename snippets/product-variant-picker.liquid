@@ -10,15 +10,14 @@ Usage:
 {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
 {% endcomment %}
 
-
-
-{%- unless product.has_only_default_variant -%}
-  <variant-radios
+{% comment %}
+START CODE FOR CREATE DROPDOWN FOR PROODYCT SIZES AND PILLS FOR PRODUCT COLORS
+{% endcomment %}{%- unless product.has_only_default_variant -%}
+    <variant-radios
     class="no-js-hidden"
     data-section="{{ section.id }}"
     data-url="{{ product.url }}"
-    {{ block.shopify_attributes }}>
-    {%- for option in product.options_with_values -%}
+    {{ block.shopify_attributes }}> {%- for option in product.options_with_values -%}
       <fieldset class="js product-form__input {% unless forloop.first %}hidden{% endunless %}">
         <legend class="form__label">{{ option.name }}</legend>
         {%- for value in option.values -%}
@@ -69,8 +68,14 @@ Usage:
     <script type="application/json">
       {{ product.variants | json }}
     </script>
+
   </variant-selects>
 {%- endunless -%}
+
+{% comment %}
+END CODE FOR CREATE DROPDOWN FOR PROODYCT SIZES AND PILLS FOR PRODUCT COLORS
+{% endcomment %}
+
 
 {% comment %}
 <noscript class="product-form__noscript-wrapper-{{ section.id }}">
