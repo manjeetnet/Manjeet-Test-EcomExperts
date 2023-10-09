@@ -1257,3 +1257,12 @@ class ProductRecommendations extends HTMLElement {
 }
 
 customElements.define('product-recommendations', ProductRecommendations);
+
+/**CODE TO RESET THE PRODUCT SIZE VARIANT DROPDOWN***/
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('[name^="options[Size]"]').forEach(function(node) {
+  node.options[0].selected = true;
+   //console.log(node.options[node.selectedIndex].value);
+  });
+}, false);
