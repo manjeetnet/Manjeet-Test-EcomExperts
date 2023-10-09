@@ -23,6 +23,8 @@
 {{ 'component-rating.css' | asset_url | stylesheet_tag }}
 {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
 
+
+
 {%- if card_product and card_product != empty -%}
   {%- liquid
     assign ratio = 1
@@ -35,6 +37,14 @@
       assign ratio = 1
     endif
   -%}
+
+  {% comment %}
+    HIDE THE PRODUCT WITH hideme TAG
+    -BELOW THE CODE TO HIDE SPECIFIC PRODUCT WHICH HAVE 'hideme' TAG
+    -CONDITIN START
+  {% endcomment %}
+
+  {% unless card_product.tags contains 'hideme' %}
   <div class="card-wrapper product-card-wrapper underline-links-hover">
     <div
       class="
@@ -384,4 +394,10 @@
       </div>
     </div>
   </div>
+
+  {% comment %}
+    HIDE THE PRODUCT WITH hideme TAG
+    CONDITIN END
+  {% endcomment %}
+{% endunless %}
 {%- endif -%}

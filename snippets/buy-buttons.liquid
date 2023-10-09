@@ -51,6 +51,7 @@
         novalidate: 'novalidate',
         data-type: 'add-to-cart-form'
       -%}
+      
         <input
           type="hidden"
           name="id"
@@ -62,7 +63,7 @@
         {%- if gift_card_recipient_feature_active -%}
           {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
         {%- endif -%}
-
+        {% unless product.tags contains 'hideme' %}
         <div class="product-form__buttons">
           {%- liquid
             assign check_against_inventory = true
@@ -105,6 +106,7 @@
             {{ form | payment_button }}
           {%- endif -%}
         </div>
+      {% endunless %}
       {%- endform -%}
     </product-form>
   {%- else -%}
