@@ -961,13 +961,13 @@ class VariantSelects extends HTMLElement {
   onVariantChange() {
     this.updateOptions();
     this.updateMasterId();
-    this.toggleAddButton(true, '', false);
+    //this.toggleAddButton(true, '', false);
     this.updatePickupAvailability();
     this.removeErrorMessage();
     this.updateVariantStatuses();
 
     if (!this.currentVariant) {
-      this.toggleAddButton(true, '', true);
+    //  this.toggleAddButton(true, '', true);
       this.setUnavailable();
     } else {
       this.updateMedia();
@@ -976,6 +976,21 @@ class VariantSelects extends HTMLElement {
       this.renderProductInfo();
       this.updateShareUrl();
     }
+
+    const productForm = document.getElementById(`product-form-${this.dataset.section}`);
+    const addButton = productForm.querySelector('[name="add"]');
+    const buyButton = productForm.querySelector('.product-form__buttons .shopify-payment-button button');
+    
+    if (this.currentVariant.option2=="Unselected") {
+      console.log(this.currentVariant.option2);
+      addButton.setAttribute("disabled", "disabled");
+      buyButton.setAttribute("disabled", "disabled");
+    } else {
+      addButton.removeAttribute("disabled");  
+      buyButton.removeAttribute("disabled");
+    }
+
+
   }
 
   updateOptions() {
@@ -1161,7 +1176,7 @@ class VariantSelects extends HTMLElement {
       addButton.setAttribute('disabled', 'disabled');
       if (text) addButtonText.textContent = text;
     } else {
-      addButton.removeAttribute('disabled');
+      //addButton.removeAttribute('disabled');
       addButtonText.textContent = window.variantStrings.addToCart;
     }
 
@@ -1264,5 +1279,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('[name^="options[Size]"]').forEach(function(node) {
   node.options[0].selected = true;
    //console.log(node.options[node.selectedIndex].value);
+
+   if(node.options[node.selectedIndex].value==="Unselected")
+   {
+    //console.log("h");
+    document.querySelector('.product-form__submit').setAttribute('disabled', 'disabled');   
+   }
+
   });
 }, false);
+
