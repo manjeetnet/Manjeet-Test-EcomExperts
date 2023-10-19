@@ -421,7 +421,105 @@
               %}
 
             {%- when 'variant_picker' -%}
+            
+                {% comment %}
+                IF CONDITION TO CHECK PRODUCT HAVE MORE THE ONE PRODUCT VARIANTS
+                {% endcomment %}
+               {%- if product.options.size > 1 -%}
+               
+               {% comment %}
+               IF PRODUCT HAVE 2 VARIANT TYPE THEN FIRE THE CODE FOR PILLS AND DROPDOWN
+               {% endcomment %}
+
+               {% comment %}
+               START THE CODE TO CREATE PILLS ANF DROPDOWN ON PRODUCT DETAIL PAGE
+               {% endcomment %}
+
+               {%- unless product.has_only_default_variant -%}
+
+               <variant-selects class="no-js-hidden" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
+                  {%- for option in product.options_with_values -%}
+                  {% unless forloop.last %}
+                      <fieldset class="js product-form__input">
+                        <legend class="form__label">{{ option.name }}</legend>
+                        {%- for value in option.values -%}
+                          <input type="radio" id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                                name="{{ option.name }}"
+                                value="{{ value | escape }}"
+                                form="{{ product_form_id }}"
+                                {% if option.selected_value == value %}checked{% endif %}
+                          >
+                          <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
+                            {{ value }}
+                          </label>
+                        {%- endfor -%}
+                      </fieldset>
+                      {% endunless %}
+                  {%- endfor -%}
+                 
+                
+                  {%- for option in product.options_with_values -%}
+                  {% if forloop.last %}
+                    <div class="product-form__input product-form__input--dropdown ">
+                      <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+                        {{ option.name }}
+                      </label>
+                      <div class="select">
+                        <select id="Option-{{ section.id }}-{{ forloop.index0 }}"
+                          class="select__select"
+                          name="options[{{ option.name | escape }}]"
+                          form="{{ product_form_id }}"
+                        >
+                          {%- for value in option.values -%}
+                            <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>
+                              {{ value }}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                        {% render 'icon-caret' %}
+                      </div>
+                    </div>
+                    {% endif %}
+                  {%- endfor -%}
+
+                  <script type="application/json">
+                    {{ product.variants | json }}
+                  </script>
+                </variant-selects>
+            {%- endunless -%}
+
+            <noscript class="product-form__noscript-wrapper-{{ section.id }}">
+              <div class="product-form__input{% if product.has_only_default_variant %} hidden{% endif %}">
+                <label class="form__label" for="Variants-{{ section.id }}">{{ 'products.product.product_variants' | t }}</label>
+                <div class="select">
+                  <select name="id" id="Variants-{{ section.id }}" class="select__select" form="{{ product_form_id }}">
+                    {%- for variant in product.variants -%}
+                      <option
+                        {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %}
+                        {% if variant.available == false %}disabled{% endif %}
+                        value="{{ variant.id }}"
+                      >
+                        {{ variant.title }}
+                        {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+                        - {{ variant.price | money | strip_html }}
+                      </option>
+                    {%- endfor -%}
+                  </select>
+                  {% render 'icon-caret' %}
+                </div>
+              </div>
+            </noscript>
+              {% comment %}
+               END THE CODE FOR PILLS ANF DROPDOWN ON PRODUCT DETAIL PAGE
+               {% endcomment %}
+
+            {%- else -%}
+             {% comment %}
+               ELSE IF PRODUCT HAVE ONLY PRODUCT VARIANTS THEN FIRE THE EXISTING CODE 
+             {% endcomment %}
               {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+            {%- endif -%}
+
             {%- when 'buy_buttons' -%}
               {%- render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true -%}
             {%- when 'rating' -%}

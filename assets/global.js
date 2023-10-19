@@ -949,7 +949,7 @@ class SlideshowComponent extends SliderComponent {
     });
   }
 }
-
+var bothValues; //ARRAY VARIALBE DECLARER 
 customElements.define('slideshow-component', SlideshowComponent);
 
 class VariantSelects extends HTMLElement {
@@ -959,15 +959,17 @@ class VariantSelects extends HTMLElement {
   }
 
   onVariantChange() {
+    bothValues = []; //ARRAY VARIALBE DEFINE 
     this.updateOptions();
+    this.updateOptionsSelect()
     this.updateMasterId();
-    //this.toggleAddButton(true, '', false);
+    this.toggleAddButton(true, '', false);
     this.updatePickupAvailability();
     this.removeErrorMessage();
     this.updateVariantStatuses();
 
     if (!this.currentVariant) {
-    //  this.toggleAddButton(true, '', true);
+      this.toggleAddButton(true, '', true);
       this.setUnavailable();
     } else {
       this.updateMedia();
@@ -976,28 +978,55 @@ class VariantSelects extends HTMLElement {
       this.renderProductInfo();
       this.updateShareUrl();
     }
+  
+   // console.log(this.options);
+     console.log(this.currentVariant);
 
     const productForm = document.getElementById(`product-form-${this.dataset.section}`);
     const addButton = productForm.querySelector('[name="add"]');
     const buyButton = productForm.querySelector('.product-form__buttons .shopify-payment-button button');
-    
-    if (this.currentVariant.option2=="Unselected") {
-      console.log(this.currentVariant.option2);
-      addButton.setAttribute("disabled", "disabled");
-      buyButton.setAttribute("disabled", "disabled");
-    } else {
-      addButton.removeAttribute("disabled");  
-      buyButton.removeAttribute("disabled");
+    const addButtonText = productForm.querySelector('[name="add"] > span');
+
+    //Condition : Disabled the ADD TO CART BUTTON if Selected Size is "Unselected"
+    if (this.currentVariant) {
+      if (this.currentVariant.option2=="Unselected") {
+        addButton.setAttribute("disabled", "disabled");
+        buyButton.setAttribute("disabled", "disabled");
+      } else {
+        addButton.removeAttribute("disabled");  
+        buyButton.removeAttribute("disabled");
     }
-
-
+  }
   }
 
   updateOptions() {
-    this.options = Array.from(this.querySelectorAll('select'), (select) => select.value);
+   //OLD CODE TO GET THE DROPDOWN VALUE 
+  //this.options = Array.from(this.querySelectorAll('select'), (select) => select.value);
+  
+  //NEW CODE TO GET THE DROPDOWN VALUE and STORE INTO ARRAY VARIALBE 
+   bothValues.push (Array.from(this.querySelectorAll('select'), (select) => select.value))
+  }
+
+  updateOptionsSelect() {
+    const fieldsets = Array.from(this.querySelectorAll('fieldset'));
+
+     //OLD CODE TO GET THE PILLS(RADIO) VALUES 
+   /*   this.options = fieldsets.map((fieldset) => {
+      return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
+    });
+    */
+   //NEW CODE TO GET THE PILLS(RADIO) VALUE and STORE INTO ARRAY VARIALBE 
+  bothValues.push (fieldsets.map((fieldset) => {
+      return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
+    }));
   }
 
   updateMasterId() {
+ //  console.log(bothValues);
+  //CODE TO CONVERT THE ARRAY INTO SET
+  const set = new Set([bothValues[1][0],bothValues[0][0]]);
+  this.options = Array.from(set);
+
     this.currentVariant = this.getVariantData().find((variant) => {
       return !variant.options
         .map((option, index) => {
@@ -1176,7 +1205,7 @@ class VariantSelects extends HTMLElement {
       addButton.setAttribute('disabled', 'disabled');
       if (text) addButtonText.textContent = text;
     } else {
-      addButton.removeAttribute('disabled');
+     // addButton.removeAttribute('disabled');
       addButtonText.textContent = window.variantStrings.addToCart;
     }
 
